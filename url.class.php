@@ -126,19 +126,17 @@ class url {
      * @return int $id Retorna a Id que pode estar na URL
      */
     public function getId($posicao = false) {
-        $id = null;
+        $id = 0;
         if ($posicao === false) {
             $last = (count($this->partes))-1;
             $aux = array_reverse(explode("-",$this->partes[$last]));
-            return (int) $aux[0];
+            $id = (int) $aux[0];
         } else {
-            if (is_int($posicao) and $this->get($posicao)!=="") {
-                return array_reverse(explode('-',$this->get($posicao)))[0];
-            }
-            if (is_string($posicao) and $this->get($posicao)!=="") {
-                return array_reverse(explode('-',$this->get($posicao)))[0];
+            if ((is_int($posicao) || is_string($posicao)) and $this->get($posicao)!=="") {
+                $id = (int) array_reverse(explode('-',$this->get($posicao)))[0];
             }
         }
+        return $id;
     }
 
     /**
@@ -156,6 +154,7 @@ class url {
             }
             return ($onlyKey?(isset($this->partes[$wordKey+1])?$wordKey+1:""):(isset($this->partes[$wordKey+1])?$this->partes[$wordKey+1]:""));
         }
+        return false;
     }
 
     /**
@@ -177,6 +176,7 @@ class url {
             }
             return implode("/",$url);
         }
+        return false;
     }
 
     /**
@@ -202,6 +202,7 @@ class url {
             }
             return ($onlyKey?(isset($this->partes[$wordKey-1])?$wordKey-1:""):(isset($this->partes[$wordKey-1])?$this->partes[$wordKey-1]:""));
         }
+        return false;
     }
 
     /**
@@ -229,6 +230,7 @@ class url {
                 return false;
             }
         }
+        return false;
     }
         
 
@@ -244,7 +246,7 @@ class url {
      * @param string $string Recebe um texto para converter em URL.
      * @return string $novaUrl Esta função gera uma url para um link. Só deve ser usada para links diretos (sem "/")
      */
-    public function tratar($string) {        
+    public function URLizer($string) {        
         $string = preg_replace('/[áàãâä]/ui', 'a', $string);
         $string = preg_replace('/[éèêë]/ui', 'e', $string);
         $string = preg_replace('/[íìîï]/ui', 'i', $string);
@@ -263,7 +265,7 @@ class url {
      * @return string Retorna o Link gerado.
      */
     public function gerarLink($texto, $id = false) {
-        $texto = $this->tratar($texto);
+        $texto = $this->URLizer($texto);
         if (strlen($texto) > 50) {
             $texto = substr($texto, 0, 50);
         }
