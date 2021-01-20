@@ -11,4 +11,4 @@ It can also be omitted, but then the script will try to use $_SERVER values to b
 ---
 
 ## Please Note
-This class NEEDS a .htaccess file that redirects the user to a specific page (usually the root/home page), otherwise the URL that it will work with may result in a 5XX error family (bad access). 
+This class NEEDS a .htaccess file that redirects the user to a specific page (usually the root/home page), otherwise the URL that it will work with may result in a 50X error family (bad access). 
