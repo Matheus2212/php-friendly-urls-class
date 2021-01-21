@@ -14,7 +14,7 @@
  * 16/01/2021 -> getURLAntes (refatorado método)
  * 16/01/2021 -> getIdAntes (refatorado método)
  * 16/01/2021 -> Renomeado método gerarLinkWebsite para gerarLinkInterno
- * 
+ * 20/01/2021 -> Melhorada performance geral da classe
  */
 
 class url {
@@ -32,8 +32,7 @@ class url {
     public function __construct($url = false, $get = false) {
         $this->setGet($get);
         $this->url = ($url ? $url : ($this->get ? preg_replace("/\?.*/", "", preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])) : preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])));
-        $lastChar = substr($this->url, -1);
-        if($lastChar!=="/"){
+        if(substr($this->url, -1)!=="/"){
             $this->url = $this->url."/";
         }
         $this->site = $_SERVER['HTTP_HOST'];
@@ -97,7 +96,7 @@ class url {
      * @return bool Verifica se possui o o que for informado aqui na url. Se tiver, retorna true.
      */
     public function contem($palavra) {
-        if ((in_array($palavra, $this->partes)) || ( in_array($this->tratar($palavra), $this->partes)) || preg_match("/$palavra/", implode('/',$this->partes))) {
+        if ((in_array($palavra, $this->partes)) || ( in_array($this->tratar($palavra), $this->partes)) || $this->get($palavra)!=="" || preg_match("/$palavra/", implode('/',$this->partes))) {
             return true;
         } else {
             return false;
@@ -152,7 +151,7 @@ class url {
                     break;
                 }
             }
-            return ($onlyKey?(isset($this->partes[$wordKey+1])?$wordKey+1:""):(isset($this->partes[$wordKey+1])?$this->partes[$wordKey+1]:""));
+            return ($onlyKey ? (isset($this->partes[$wordKey+1])?$wordKey+1 : false) : (isset($this->partes[$wordKey+1]) ? $this->partes[$wordKey+1] : false));
         }
         return false;
     }
@@ -200,7 +199,7 @@ class url {
                     break;
                 }
             }
-            return ($onlyKey?(isset($this->partes[$wordKey-1])?$wordKey-1:""):(isset($this->partes[$wordKey-1])?$this->partes[$wordKey-1]:""));
+            return ($onlyKey ? (isset($this->partes[$wordKey-1]) ? $wordKey-1 : false) : (isset($this->partes[$wordKey-1]) ? $this->partes[$wordKey-1] : false));
         }
         return false;
     }
@@ -232,7 +231,6 @@ class url {
         }
         return false;
     }
-        
 
     /**
      * @param string $palavra Recebe a palavra para retornar a ID que há antes dela.
