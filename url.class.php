@@ -15,6 +15,7 @@
  * 16/01/2021 -> getIdAntes (refatorado método)
  * 16/01/2021 -> Renomeado método gerarLinkWebsite para gerarLinkInterno
  * 20/01/2021 -> Melhorada performance geral da classe
+ * 20/01/2021 -> Renomeado método tratar para URLizer
  */
 
 class url {
@@ -96,7 +97,7 @@ class url {
      * @return bool Verifica se possui o o que for informado aqui na url. Se tiver, retorna true.
      */
     public function contem($palavra) {
-        if ((in_array($palavra, $this->partes)) || ( in_array($this->tratar($palavra), $this->partes)) || $this->get($palavra)!=="" || preg_match("/$palavra/", implode('/',$this->partes))) {
+        if ($palavra!=="" && ((in_array($palavra, $this->partes)) || ( in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra)!=="" || preg_match("/$palavra/", implode('/',$this->partes)))) {
             return true;
         } else {
             return false;
@@ -183,7 +184,7 @@ class url {
      * @return int $id Retorna a ID que está depois da palavra informada
      */
     public function getIdApos($palavra) {
-        return $this->getId($this->getApos($this->tratar($palavra),true));
+        return $this->getId($this->getApos($this->URLizer($palavra),true));
     }
  
     /**
@@ -237,7 +238,7 @@ class url {
      * @return int $id Retorna a ID que está antes da palavra informada.
      */
     public function getIdAntes($palavra) {
-        return $this->getId($this->getAntes($this->tratar($palavra),true));
+        return $this->getId($this->getAntes($this->URLizer($palavra),true));
     }
 
     /**
