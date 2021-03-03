@@ -8,6 +8,8 @@ This class __construct method accepts a initial $url to work with. Please note t
 
 It can also be omitted, but then the script will try to use $_SERVER values to build the URL.
 
+This class will be updated whenever something new shows up for SEO practices. 
+
 ---
 
 ## Please Note
