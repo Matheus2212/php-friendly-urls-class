@@ -13,4 +13,4 @@ This class will be updated whenever something new shows up for SEO practices.
 ---
 
 ## Please Note
-This class NEEDS a .htaccess file that redirects the user to a specific page (usually the root/home page), otherwise the URL that it will work with may result in a 50X error family (bad access). 
+It is recommended to use a .htaccess file that redirects the user to a specific page (usually the root/home page) index, otherwise the URL that it will work with may result in a 50X error family (bad access) in some cases. It is not required, but it works better this way.
