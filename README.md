@@ -1,4 +1,4 @@
-# PHP-Friendly-URLs
+# PHP Friendly URLs Class
 Class that controls Friendly URL. It is focused on SEO best practices.
 
 ---
