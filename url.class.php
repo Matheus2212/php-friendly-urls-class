@@ -1,34 +1,27 @@
 <?php
 
 /**
- * [URL] - Classe responsável por manipular a URL informada na barra de endereço. 
+ * [URL] - This class is responsible to retrieve data and set data using the friendly URL best practice.
  * 
- * 16/04/2020 -> Documentação Revisada
- * 16/01/2021 -> Feitos ajustes em métodos
- * 16/01/2021 -> __construct (com/sem a barra no final)
- * 16/01/2021 -> getId (para trabalhar melhor com SEO e URLs amigáveis);
- * 16/01/2021 -> getApos (refatorado método)
- * 16/01/2021 -> getURLApos (refatorado método)
- * 16/01/2021 -> getIdApos (refatorado método)
- * 16/01/2021 -> getAntes (refatorado método)
- * 16/01/2021 -> getURLAntes (refatorado método)
- * 16/01/2021 -> getIdAntes (refatorado método)
- * 16/01/2021 -> Renomeado método gerarLinkWebsite para gerarLinkInterno
- * 20/01/2021 -> Melhorada performance geral da classe
- * 20/01/2021 -> Renomeado método tratar para URLizer
+ * 2020-04-16 -> Readme updated
+ * 2021-01-16 -> Methods updated - __construct accepts within or without https:// URL
+ * 2021-01-15 -> getId (best practice within SEO and URL best practices);
+ * 2021-01-16 -> Renamed method to create a new link using URL class
+ * 2021-01-21 -> Improved overall class performance - created URLizer method
+ * 2021-07-31 -> Changed README.md to English
  */
 
-class url {
+class URL {
 
-    private $site = null; // [ATRIBUTO] - Nome do Website onde está a classe;
-    private $url = null; // [ATRIBUTO] - URL informada na Barra de Endereço.
-    private $url_agora = null; // [ATRIBUTO] - URL atual.
-    private $partes = null; // [ATRIBUTO] - Partes da URL informada na Barra de Endereço.
-    private $regras = array(); // [ATRIBUTO] - Regras da adicionadas pelo usuário.
-    private $get = false; // [ATRIBUTO] - Filtra o $_GET da URL para interação com a classe. Pode ser retirado.
+    private $site = null; // website name
+    private $url = null; // website URL
+    private $url_agora = null; // current URL
+    private $partes = null; // URL parts
+    private $regras = array(); // Custom user rules
+    private $get = false; // You can decide if the $_GET will be considered or ignored
 
     /**
-     * __construct Monta a URL assim que a página é aberta.
+     * __construct Creates the URL within the new class instance
      */
     public function __construct($url = false, $get = false) {
         $this->setGet($get);
@@ -58,8 +51,8 @@ class url {
     }
 
     /**
-     * @param int $parte Recebe a posição desejada.
-     * @return string $posicao Retorna o texto da url na posicao especificada.
+     * @param int $parte Receives the desired URL part
+     * @return string $posicao Returns the informed URL part text
      */
     public function get($parte) {
         if (array_key_exists($parte, $this->partes)) {
@@ -72,29 +65,29 @@ class url {
     }
 
     /**
-     * @return string $string Retorna o $host do site.
+     * @return string $string Returns website's HOST
      */
     public function getSite() {
         return $this->site;
     }
 
     /**
-     * @return array $array Retorna todas as partes da URL.
+     * @return array $array Returns all URL parts in an array
      */
     public function getPartes() {
         return $this->partes;
     }
 
     /**
-     * @return string Retorna a URL no momento
+     * @return string Returns the current URL
      */
     public function agora() {
         return $this->url_agora;
     }
 
     /**
-     * @param string $palavra Recebe a palavra alvo para pesquisar.
-     * @return bool Verifica se possui o o que for informado aqui na url. Se tiver, retorna true.
+     * @param string $palavra Receives a word to search within the URL parts
+     * @return bool If the word exists on URL, returns true
      */
     public function contem($palavra) {
         if ($palavra!=="" && ((in_array($palavra, $this->partes)) || ( in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra)!=="" || preg_match("/$palavra/", implode('/',$this->partes)))) {
@@ -106,7 +99,7 @@ class url {
 
     /**
      * 
-     * @param bool $get Define se a url irá retornar o endereço com ou sem valores de $_GET
+     * @param bool $get Defines if $_GET will be considered or ignored
      */
     public function setGet($get = false) {
         $this->get = ($get);
@@ -114,16 +107,16 @@ class url {
 
     /**
      * 
-     * @param string $nome Recebe o nome da regra.
-     * @param int $posicao Recebe a posição da regra.
+     * @param string $nome Receives the rule name
+     * @param int $posicao It is the rule itself
      */
     public function addRegra($nome, $posicao) {
         $this->regras[$nome] = $posicao;
     }
 
     /**
-     * @param string $posicao = null Recebe a URL para procurar por uma ID.
-     * @return int $id Retorna a Id que pode estar na URL
+     * @param string $posicao = null Searches for an ID on the URL
+     * @return int $id Returns the ID if it is on the URL
      */
     public function getId($posicao = false) {
         $id = 0;
@@ -140,8 +133,8 @@ class url {
     }
 
     /**
-     * @param string $palavra Recebe a palavra para pegar o que há depois dela.
-     * @return string Retorna toda a url Depois da Palavra informada.
+     * @param string $palavra This acts as a break point for the current URL
+     * @return string Returns all URL parts after the given word
      */
     public function getApos($palavra,$onlyKey = false) {
         if ($this->contem($palavra)) {
@@ -158,8 +151,8 @@ class url {
     }
 
     /**
-     * @param string $palavra Recebe a palavra para retornar o que há antes dela.
-     * @return string Retorna toda a url Antes da Palavra informada.
+     * @param string $palavra This acts as a break point for the current URL
+     * @return string Returns all URL parts before the given word
      */
     public function getURLApos($palavra) {
         if ($this->contem($palavra)) {
@@ -180,16 +173,16 @@ class url {
     }
 
     /**
-     * @param string $palavra Recebe a palavra para procurar o que há depois dela.
-     * @return int $id Retorna a ID que está depois da palavra informada
+     * @param string $palavra Receives a word to search for an ID after the word
+     * @return int $id Returns the ID if found
      */
     public function getIdApos($palavra) {
         return $this->getId($this->getApos($this->URLizer($palavra),true));
     }
  
     /**
-     * @param string $palavra Recebe a palavra para retornar o que há antes dela.
-     * @return string Retorna toda a url Antes da Palavra informada.
+     * @param string $palavra This acts as a break point for the current URL
+     * @return string Returns all the URL parts before the given word
      */
     public function getAntes($palavra,$onlyKey = false) {
         if ($this->contem($palavra)) {
@@ -206,8 +199,8 @@ class url {
     }
 
     /**
-     * @param string $palavra Recebe a palavra para retornar o que há antes dela.
-     * @return string Retorna toda a url Antes da Palavra informada.
+     * @param string $palavra This acts as a break point for the current URL
+     * @return string Returns all URL parts before the given word
      */
     public function getURLAntes($palavra) {
         if ($this->contem($palavra)) {
@@ -234,16 +227,16 @@ class url {
     }
 
     /**
-     * @param string $palavra Recebe a palavra para retornar a ID que há antes dela.
-     * @return int $id Retorna a ID que está antes da palavra informada.
+     * @param string $palavra Receives a word to search for an ID before the word
+     * @return int $id Returns the ID if given word and ID is found
      */
     public function getIdAntes($palavra) {
         return $this->getId($this->getAntes($this->URLizer($palavra),true));
     }
 
     /**
-     * @param string $string Recebe um texto para converter em URL.
-     * @return string $novaUrl Esta função gera uma url para um link. Só deve ser usada para links diretos (sem "/")
+     * @param string $string Receives some text to normalize for URL format
+     * @return string $novaUrl This function will returns the same given string, but in "URL format"
      */
     public function URLizer($string) {        
         $string = preg_replace('/[áàãâä]/ui', 'a', $string);
@@ -259,9 +252,9 @@ class url {
 
     /**
      * 
-     * @param string $texto Recebe o texto a ser tornado link.
-     * @param int $id Recebe uma Id, caso utilize $_GET com a página destino.
-     * @return string Retorna o Link gerado.
+     * @param string $texto Receives a text to render as link
+     * @param int $id Receievs an ID to append on the link
+     * @return string Returns generated link
      */
     public function gerarLink($texto, $id = false) {
         $texto = $this->URLizer($texto);
@@ -273,9 +266,9 @@ class url {
 
     /**
      * 
-     * @param string $texto Recebe o texto a ser tornado link.
-     * @param int $id Recebe uma Id, caso utilize $_GET com a página destino.
-     * @return string Retorna o Link gerado de forma que seja possível acessar externamente.
+     * @param string $texto Receives some text to render as your own website link
+     * @param int $id Receives an ID to append on the generated link
+     * @return string Returns the generated link as if it is on your own website
      */
     public function gerarLinkInterno($texto, $id = false) {
         return $this->site . $this->url . $this->gerarLink($texto, $id);
