@@ -4,7 +4,7 @@
  * [URL] - This class is responsible to retrieve data and set data using the friendly URL best practice.
  * 
  * 2020-04-16 -> Readme updated
- * 2021-01-16 -> Methods updated - __construct accepts within or without https:// URL
+ * 2021-01-16 -> Methods updated - __construct accepts URLs with or without https://
  * 2021-01-15 -> getId (best practice within SEO and URL best practices);
  * 2021-01-16 -> Renamed method to create a new link using URL class
  * 2021-01-21 -> Improved overall class performance - created URLizer method
@@ -69,6 +69,13 @@ class URL {
      */
     public function getSite() {
         return $this->site;
+    }
+
+    /**
+     * @return string $string Returns website's HOST
+     */
+    public function getURL() {
+        return $this->url;
     }
 
     /**
