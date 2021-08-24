@@ -11,7 +11,8 @@
  * 2021-07-31 -> Changed README.md to English
  */
 
-class URL {
+class URL
+{
 
     private $site = null; // website name
     private $url = null; // website URL
@@ -23,15 +24,17 @@ class URL {
     /**
      * __construct Creates the URL within the new class instance
      */
-    public function __construct($url = false, $get = false) {
+    public function __construct($url = false, $get = false)
+    {
         $this->setGet($get);
         $this->url = ($url ? $url : ($this->get ? preg_replace("/\?.*/", "", preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])) : preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])));
-        if(substr($this->url, -1)!=="/"){
-            $this->url = $this->url."/";
+        if (substr($this->url, -1) !== "/") {
+            $this->url = $this->url . "/";
         }
         $this->site = $_SERVER['HTTP_HOST'];
-        $this->url_agora = $this->site . $this->url;
-        $partes = explode("/", $this->url);
+        $this->url_agora = $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER["REQUEST_URI"];
+        $partes = str_replace($this->url,'',$this->url_agora);
+        $partes = explode("/", $partes[1]);
         if ($url) {
             if (preg_match("/\//", $url)) {
                 $informada = explode("/", $url);
@@ -50,11 +53,18 @@ class URL {
         $this->partes = $partes;
     }
 
+    public function __set($key, $value)
+    {
+        $this->$key = $value;
+        return $this;
+    }
+
     /**
      * @param int $parte Receives the desired URL part
      * @return string $posicao Returns the informed URL part text
      */
-    public function get($parte) {
+    public function get($parte)
+    {
         if (array_key_exists($parte, $this->partes)) {
             return $this->partes[$parte];
         }
@@ -67,28 +77,32 @@ class URL {
     /**
      * @return string $string Returns website's HOST
      */
-    public function getSite() {
+    public function getSite()
+    {
         return $this->site;
     }
 
     /**
      * @return string $string Returns website's HOST
      */
-    public function getURL() {
+    public function getURL()
+    {
         return $this->url;
     }
 
     /**
      * @return array $array Returns all URL parts in an array
      */
-    public function getPartes() {
+    public function getPartes()
+    {
         return $this->partes;
     }
 
     /**
      * @return string Returns the current URL
      */
-    public function agora() {
+    public function agora()
+    {
         return $this->url_agora;
     }
 
@@ -96,8 +110,10 @@ class URL {
      * @param string $palavra Receives a word to search within the URL parts
      * @return bool If the word exists on URL, returns true
      */
-    public function contem($palavra) {
-        if ($palavra!=="" && ((in_array($palavra, $this->partes)) || ( in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra)!=="" || preg_match("/$palavra/", implode('/',$this->partes)))) {
+    public function contem($palavra)
+    {
+        $palavra = str_replace("/","\/",$palavra);
+        if ($palavra !== "" && ((in_array($palavra, $this->partes)) || (in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra) !== "" || preg_match("/" .$palavra. "/", $this->url))) {
             return true;
         } else {
             return false;
@@ -108,7 +124,8 @@ class URL {
      * 
      * @param bool $get Defines if $_GET will be considered or ignored
      */
-    public function setGet($get = false) {
+    public function setGet($get = false)
+    {
         $this->get = ($get);
     }
 
@@ -117,7 +134,8 @@ class URL {
      * @param string $nome Receives the rule name
      * @param int $posicao It is the rule itself
      */
-    public function addRegra($nome, $posicao) {
+    public function addRegra($nome, $posicao)
+    {
         $this->regras[$nome] = $posicao;
     }
 
@@ -125,15 +143,16 @@ class URL {
      * @param string $posicao = null Searches for an ID on the URL
      * @return int $id Returns the ID if it is on the URL
      */
-    public function getId($posicao = false) {
+    public function getId($posicao = false)
+    {
         $id = 0;
         if ($posicao === false) {
-            $last = (count($this->partes))-1;
-            $aux = array_reverse(explode("-",$this->partes[$last]));
+            $last = (count($this->partes)) - 1;
+            $aux = array_reverse(explode("-", $this->partes[$last]));
             $id = (int) $aux[0];
         } else {
-            if ((is_int($posicao) || is_string($posicao)) and $this->get($posicao)!=="") {
-                $id = (int) array_reverse(explode('-',$this->get($posicao)))[0];
+            if ((is_int($posicao) || is_string($posicao)) and $this->get($posicao) !== "") {
+                $id = (int) array_reverse(explode('-', $this->get($posicao)))[0];
             }
         }
         return $id;
@@ -143,16 +162,17 @@ class URL {
      * @param string $palavra This acts as a break point for the current URL
      * @return string Returns all URL parts after the given word
      */
-    public function getApos($palavra,$onlyKey = false) {
+    public function getApos($palavra, $onlyKey = false)
+    {
         if ($this->contem($palavra)) {
             $wordKey = null;
-            foreach($this->partes as $key =>$value){
-                if($value==$palavra){
+            foreach ($this->partes as $key => $value) {
+                if ($value == $palavra) {
                     $wordKey = $key;
                     break;
                 }
             }
-            return ($onlyKey ? (isset($this->partes[$wordKey+1])?$wordKey+1 : false) : (isset($this->partes[$wordKey+1]) ? $this->partes[$wordKey+1] : false));
+            return ($onlyKey ? (isset($this->partes[$wordKey + 1]) ? $wordKey + 1 : false) : (isset($this->partes[$wordKey + 1]) ? $this->partes[$wordKey + 1] : false));
         }
         return false;
     }
@@ -161,20 +181,21 @@ class URL {
      * @param string $palavra This acts as a break point for the current URL
      * @return string Returns all URL parts before the given word
      */
-    public function getURLApos($palavra) {
+    public function getURLApos($palavra)
+    {
         if ($this->contem($palavra)) {
-            $wordKey = $this->getApos($palavra,true);
+            $wordKey = $this->getApos($palavra, true);
             $contar = false;
             $url = array();
-            foreach($this->partes as $key => $value){
-                if($key==$wordKey){
-                    $contar = true; 
+            foreach ($this->partes as $key => $value) {
+                if ($key == $wordKey) {
+                    $contar = true;
                 }
-                if($contar){
+                if ($contar) {
                     $url[] = $value;
                 }
             }
-            return implode("/",$url);
+            return implode("/", $url);
         }
         return false;
     }
@@ -183,24 +204,26 @@ class URL {
      * @param string $palavra Receives a word to search for an ID after the word
      * @return int $id Returns the ID if found
      */
-    public function getIdApos($palavra) {
-        return $this->getId($this->getApos($this->URLizer($palavra),true));
+    public function getIdApos($palavra)
+    {
+        return $this->getId($this->getApos($this->URLizer($palavra), true));
     }
- 
+
     /**
      * @param string $palavra This acts as a break point for the current URL
      * @return string Returns all the URL parts before the given word
      */
-    public function getAntes($palavra,$onlyKey = false) {
+    public function getAntes($palavra, $onlyKey = false)
+    {
         if ($this->contem($palavra)) {
             $wordKey = null;
-            foreach($this->partes as $key =>$value){
-                if($value==$palavra){
+            foreach ($this->partes as $key => $value) {
+                if ($value == $palavra) {
                     $wordKey = $key;
                     break;
                 }
             }
-            return ($onlyKey ? (isset($this->partes[$wordKey-1]) ? $wordKey-1 : false) : (isset($this->partes[$wordKey-1]) ? $this->partes[$wordKey-1] : false));
+            return ($onlyKey ? (isset($this->partes[$wordKey - 1]) ? $wordKey - 1 : false) : (isset($this->partes[$wordKey - 1]) ? $this->partes[$wordKey - 1] : false));
         }
         return false;
     }
@@ -209,24 +232,25 @@ class URL {
      * @param string $palavra This acts as a break point for the current URL
      * @return string Returns all URL parts before the given word
      */
-    public function getURLAntes($palavra) {
+    public function getURLAntes($palavra)
+    {
         if ($this->contem($palavra)) {
-            $wordKey = $this->getAntes($palavra,true);
-            if($wordKey!==""){
+            $wordKey = $this->getAntes($palavra, true);
+            if ($wordKey !== "") {
                 $quebrar = null;
                 $url = array();
                 $url[] = $this->site;
-                foreach($this->partes as $key => $value){
-                    if($quebrar!==null){
+                foreach ($this->partes as $key => $value) {
+                    if ($quebrar !== null) {
                         break;
                     }
-                    if($key ==$wordKey){
+                    if ($key == $wordKey) {
                         $quebrar = true;
                     }
                     $url[] = $value;
                 }
-                return implode("/",$url);
-            }else{
+                return implode("/", $url);
+            } else {
                 return false;
             }
         }
@@ -237,15 +261,17 @@ class URL {
      * @param string $palavra Receives a word to search for an ID before the word
      * @return int $id Returns the ID if given word and ID is found
      */
-    public function getIdAntes($palavra) {
-        return $this->getId($this->getAntes($this->URLizer($palavra),true));
+    public function getIdAntes($palavra)
+    {
+        return $this->getId($this->getAntes($this->URLizer($palavra), true));
     }
 
     /**
      * @param string $string Receives some text to normalize for URL format
      * @return string $novaUrl This function will returns the same given string, but in "URL format"
      */
-    public function URLizer($string) {        
+    public function URLizer($string)
+    {
         $string = preg_replace('/[áàãâä]/ui', 'a', $string);
         $string = preg_replace('/[éèêë]/ui', 'e', $string);
         $string = preg_replace('/[íìîï]/ui', 'i', $string);
@@ -263,12 +289,13 @@ class URL {
      * @param int $id Receievs an ID to append on the link
      * @return string Returns generated link
      */
-    public function gerarLink($texto, $id = false) {
+    public function gerarLink($texto, $id = false)
+    {
         $texto = $this->URLizer($texto);
         if (strlen($texto) > 50) {
             $texto = substr($texto, 0, 50);
         }
-        return $texto . ($id ? "-". $id: "");
+        return $texto . ($id ? "-" . $id : "");
     }
 
     /**
@@ -277,8 +304,8 @@ class URL {
      * @param int $id Receives an ID to append on the generated link
      * @return string Returns the generated link as if it is on your own website
      */
-    public function gerarLinkInterno($texto, $id = false) {
+    public function gerarLinkInterno($texto, $id = false)
+    {
         return $this->site . $this->url . $this->gerarLink($texto, $id);
     }
-
 }
