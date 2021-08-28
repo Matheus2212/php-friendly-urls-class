@@ -83,11 +83,16 @@ class URL
     }
 
     /**
-     * @return string $string Returns website's HOST
+     * @return string $string Returns website's HOST. If $ip switches 'localhost' by SERVER IP
      */
-    public function getURL()
+    public function getURL($ip = false)
     {
-        return $this->url;
+        $url = $this->url;
+        $serverIp = $_SERVER["SERVER_ADDR"] == "::1" ? "127.0.0.1" : $_SERVER["SERVER_ADDR"];
+        if ($ip) {
+            $url = str_replace("localhost", $serverIp, $this->url);
+        }
+        return $url;
     }
 
     /**
@@ -101,9 +106,14 @@ class URL
     /**
      * @return string Returns the current URL
      */
-    public function agora()
+    public function agora($ip)
     {
-        return $this->url_agora;
+        $url = $this->url_agora;
+        $serverIp = $_SERVER["SERVER_ADDR"] == "::1" ? "127.0.0.1" : $_SERVER["SERVER_ADDR"];
+        if ($ip) {
+            $url = str_replace("localhost", $serverIp, $url);
+        }
+        return $url;
     }
 
     /**
