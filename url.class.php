@@ -33,9 +33,10 @@ class URL
         }
         $this->site = $_SERVER['HTTP_HOST'];
         $this->url_agora = $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER["REQUEST_URI"];
-        $partes = str_replace($this->url,'',$this->url_agora);
-        $partes = explode("/", $partes[1]);
-        if ($url) {
+
+        $partes = str_replace(preg_replace("/http(s)?\:\/\//", "", $this->url), '', preg_replace("/http(s)?\:\/\//", "", $this->url_agora));
+        $partes = explode("/", $partes);
+        /*if ($url) {
             if (preg_match("/\//", $url)) {
                 $informada = explode("/", $url);
                 foreach ($informada as $key => $value) {
@@ -46,11 +47,10 @@ class URL
             } else {
                 unset($partes[array_search($url, $partes)]);
             }
+        }*/
+        if (is_array($partes)) {
+            $this->partes = $partes;
         }
-        unset($partes[0]);
-        unset($partes[count($partes)]);
-        $partes = explode("/", implode("/", $partes));
-        $this->partes = $partes;
     }
 
     public function __set($key, $value)
@@ -112,8 +112,8 @@ class URL
      */
     public function contem($palavra)
     {
-        $palavra = str_replace("/","\/",$palavra);
-        if ($palavra !== "" && ((in_array($palavra, $this->partes)) || (in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra) !== "" || preg_match("/" .$palavra. "/", $this->url))) {
+        $palavra = str_replace("/", "\/", $palavra);
+        if ($palavra !== "" && ((in_array($palavra, $this->partes)) || (in_array($this->URLizer($palavra), $this->partes)) || $this->get($palavra) !== "" || preg_match("/" . $palavra . "/", $this->url))) {
             return true;
         } else {
             return false;
