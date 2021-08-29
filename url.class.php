@@ -106,7 +106,7 @@ class URL
     /**
      * @return string Returns the current URL
      */
-    public function agora($ip)
+    public function agora($ip=false)
     {
         $url = $this->url_agora;
         $serverIp = $_SERVER["SERVER_ADDR"] == "::1" ? "127.0.0.1" : $_SERVER["SERVER_ADDR"];
