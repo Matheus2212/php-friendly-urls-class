@@ -2,13 +2,10 @@
 
 include("url.class.php");
 
-$url = new URL();
+$url = new URL("http://127.0.0.1/testes/php-friendly-urls-class/api",true);
 
-echo "<pre>";
-//print_r($url->agora());
-print_r($_GET);
-print_r($url->contem("Testes"));
-echo "</pre>";
+$url->addRule("posicao",0);
+var_dump($url->get('posicao'));
 
 
 
