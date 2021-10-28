@@ -29,13 +29,15 @@ class URL
     public function __construct($url = false, $get = false)
     {
         $this->setGet($get);
-        $this->url = ($url ? $url : ($this->get ? preg_replace("/\?.*/", "", preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])) : preg_replace("/http(s)?\:\/\//", "", $_SERVER['REQUEST_URI'])));
+        $this->site = $_SERVER['HTTP_HOST'];
+        $this->url = ($url ? $url : $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER['REQUEST_URI']);
         if (substr($this->url, -1) !== "/") {
             $this->url = $this->url . "/";
         }
-        $this->site = $_SERVER['HTTP_HOST'];
         $this->url_now = $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER["REQUEST_URI"];
-
+        if (substr($this->url_now, -1) !== "/") {
+            $this->url_now = $this->url_now . "/";
+        }
         $parts = str_replace(preg_replace("/http(s)?\:\/\//", "", $this->url), '', preg_replace("/http(s)?\:\/\//", "", $this->url_now));
         $parts = explode("/", $parts);
         if (is_array($parts)) {
