@@ -40,6 +40,9 @@ class URL
         }
         $parts = str_replace(preg_replace("/http(s)?\:\/\//", "", $this->url), '', preg_replace("/http(s)?\:\/\//", "", $this->url_now));
         $parts = explode("/", $parts);
+        if ($parts[count($parts) - 1] == "") {
+            unset($parts[count($parts) - 1]);
+        }
         if (is_array($parts)) {
             $this->parts = $parts;
         }
