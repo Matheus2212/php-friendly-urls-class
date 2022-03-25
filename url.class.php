@@ -52,7 +52,6 @@ class URL
             if ($this->get) {
                 $parts = array_merge($parts, $get);
             }
-            print_r($parts);
             $this->parts = $parts;
         }
     }
