@@ -11,6 +11,7 @@
  * 2021-07-31 -> Changed README.md to English
  * 2021-10-27 -> Renamed almost ALL methods to english and parameters as well
  * 2021-10-27 -> Finished documentation
+ * 2022-03-25 -> Fixed $get definition and added __get magic function
  */
 
 class URL
@@ -38,12 +39,20 @@ class URL
         if (substr($this->url_now, -1) !== "/") {
             $this->url_now = $this->url_now . "/";
         }
-        $parts = str_replace(preg_replace("/http(s)?\:\/\//", "", $this->url), '', preg_replace("/http(s)?\:\/\//", "", $this->url_now));
+        $parts = str_replace(preg_replace("/http(s)?\:\/\//", "", $this->url), '', preg_replace("/http(s)?\:\/\//", "", explode("?", $this->url_now)[0]));
         $parts = explode("/", $parts);
+        if ($this->get) {
+            $get = explode("?", $this->url_now);
+            $get = explode("&", $get[1]);
+        }
         if ($parts[count($parts) - 1] == "") {
             unset($parts[count($parts) - 1]);
         }
         if (is_array($parts)) {
+            if ($this->get) {
+                $parts = array_merge($parts, $get);
+            }
+            print_r($parts);
             $this->parts = $parts;
         }
     }
@@ -54,17 +63,22 @@ class URL
         return $this;
     }
 
+    public function __get($key)
+    {
+        return $this->$key;
+    }
+
     /**
-     * @param int $parte Receives the desired URL part
+     * @param int $part Receives the desired URL part
      * @return string $position Returns the informed URL part text
      */
-    public function get($parte)
+    public function get($part)
     {
-        if (array_key_exists($parte, $this->parts)) {
-            return "/" . $this->parts[$parte];
+        if (array_key_exists($part, $this->parts)) {
+            return "/" . $this->parts[$part];
         }
-        if (array_key_exists($parte, $this->regras)) {
-            return "/" . $this->parts[$this->regras[$parte]];
+        if (array_key_exists($part, $this->regras)) {
+            return "/" . $this->parts[$this->regras[$part]];
         }
         return "/";
     }
