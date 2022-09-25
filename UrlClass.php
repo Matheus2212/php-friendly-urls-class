@@ -12,6 +12,7 @@
  * 2021-10-27 -> Renamed almost ALL methods to english and parameters as well
  * 2021-10-27 -> Finished documentation
  * 2022-03-25 -> Fixed $get definition and added __get magic function
+ * 2022-09-25 -> Renamed to be able to use PHP Unit
  */
 
 class URL
