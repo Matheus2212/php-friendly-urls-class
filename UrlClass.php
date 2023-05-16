@@ -137,7 +137,7 @@ class URL
             return true;
         }
         $word = str_replace("/", "\/", $word);
-        if ($word !== "" && (preg_match("/" . $word . "/", $this->url))) {
+        if ($word !== "" && (preg_match("/" . $word . "/", $this->now()))) {
             return true;
         }
         return false;
