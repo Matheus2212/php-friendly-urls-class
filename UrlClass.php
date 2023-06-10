@@ -13,6 +13,7 @@
  * 2021-10-27 -> Finished documentation
  * 2022-03-25 -> Fixed $get definition and added __get magic function
  * 2022-09-25 -> Renamed to be able to use PHP Unit
+ * 2023-06-10 -> Switched REQUEST_SCHEME to user HTTPS var key only
  */
 
 class URL
@@ -32,11 +33,15 @@ class URL
     {
         $this->setGet($get);
         $this->site = $_SERVER['HTTP_HOST'];
-        $this->url = ($url ? $url : $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER['REQUEST_URI']);
+        $request_scheme = "https";
+        if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != 'on') {
+            $request_scheme = "http";
+        }
+        $this->url = ($url ? $url : $request_scheme . "://" . $this->site . $_SERVER['REQUEST_URI']);
         if (substr($this->url, -1) !== "/") {
             $this->url = $this->url . "/";
         }
-        $this->url_now = $_SERVER["REQUEST_SCHEME"] . "://" . $this->site . $_SERVER["REQUEST_URI"];
+        $this->url_now = $request_scheme . "://" . $this->site . $_SERVER["REQUEST_URI"];
         if (substr($this->url_now, -1) !== "/") {
             $this->url_now = $this->url_now . "/";
         }
